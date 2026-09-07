@@ -41,16 +41,6 @@ export const ExploreView: React.FC = () => {
         {/* Filter Pills */}
         <div className="flex items-center gap-2 overflow-x-auto pb-1">
           <button
-            onClick={() => setFilterType('all')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
-              filterType === 'all'
-                ? 'bg-jain-maroon text-white shadow-xs'
-                : 'bg-white border border-jain-border text-jain-muted hover:bg-jain-cream'
-            }`}
-          >
-            सभी ग्रंथ ({booksList.length})
-          </button>
-          <button
             onClick={() => setFilterType('favorites')}
             className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
               filterType === 'favorites'
@@ -61,7 +51,7 @@ export const ExploreView: React.FC = () => {
             <Heart className="w-3.5 h-3.5 fill-current" />
             <span>पसंदीदा ({favorites.length})</span>
           </button>
-          <button
+          {/* <button
             onClick={() => setFilterType('audio')}
             className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
               filterType === 'audio'
@@ -71,7 +61,7 @@ export const ExploreView: React.FC = () => {
           >
             <Headphones className="w-3.5 h-3.5" />
             <span>ऑडियो कथाएँ</span>
-          </button>
+          </button> */}
         </div>
       </div>
 

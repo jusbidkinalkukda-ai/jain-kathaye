@@ -4,6 +4,7 @@ import { Header } from './components/common/Header';
 import { MobileBottomNav } from './components/common/MobileBottomNav';
 import { HomeView } from './views/HomeView';
 import { ExploreView } from './views/ExploreView';
+import { WishlistView } from './views/WishlistView';
 import { NotificationsView } from './views/NotificationsView';
 import { ProfileView } from './views/ProfileView';
 import { ReaderView } from './views/ReaderView';
@@ -36,6 +37,7 @@ const AppContent: React.FC = () => {
         <main className="w-full">
           {currentTab === 'home' && <HomeView />}
           {currentTab === 'explore' && <ExploreView />}
+          {currentTab === 'wishlist' && <WishlistView />}
           {currentTab === 'notifications' && <NotificationsView />}
           {currentTab === 'profile' && <ProfileView />}
         </main>

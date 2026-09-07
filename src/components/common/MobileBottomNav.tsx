@@ -1,5 +1,5 @@
 import React from 'react';
-import { Home, Compass, Bell, User } from 'lucide-react';
+import { Home, Compass, Bell, User, Heart } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { NavTab } from '../../types';
 
@@ -56,7 +56,28 @@ export const MobileBottomNav: React.FC = () => {
           </span>
         </button>
 
-        {/* Tab 3: Notifications */}
+        {/* Tab 3: Wishlist */}
+        <button
+          onClick={() => handleTabSelect('wishlist')}
+          className="flex flex-col items-center justify-center p-1 relative transition-transform active:scale-95"
+        >
+          <div
+            className={`w-11 h-8 rounded-xl flex items-center justify-center transition-colors ${
+              currentTab === 'wishlist' ? 'bg-[#FFF0B8] text-jain-maroon shadow-xs' : 'text-jain-muted'
+            }`}
+          >
+            <Heart className="w-5 h-5" />
+          </div>
+          <span
+            className={`text-[11px] font-semibold mt-0.5 ${
+              currentTab === 'wishlist' ? 'text-jain-maroon' : 'text-jain-muted'
+            }`}
+          >
+            विशलिस्ट
+          </span>
+        </button>
+
+        {/* Tab 4: Notifications */}
         <button
           onClick={() => handleTabSelect('notifications')}
           className="flex flex-col items-center justify-center p-1 relative transition-transform active:scale-95"
@@ -80,7 +101,7 @@ export const MobileBottomNav: React.FC = () => {
           </span>
         </button>
 
-        {/* Tab 4: Profile */}
+        {/* Tab 5: Profile */}
         <button
           onClick={() => handleTabSelect('profile')}
           className="flex flex-col items-center justify-center p-1 relative transition-transform active:scale-95"

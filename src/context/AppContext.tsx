@@ -18,7 +18,12 @@ import {
   getAuthToken,
   decodeJwtPayload,
 } from '../api/authService';
-import { getWishlist, addToWishlist } from '../api/wishlistService';
+import {
+  getWishlist,
+  getWishlistBooks,
+  addToWishlist,
+  removeFromWishlist,
+} from '../api/wishlistService';
 
 interface AudioState {
   isPlaying: boolean;
@@ -48,6 +53,10 @@ interface AppContextType {
   isLoadingLanding: boolean;
   landingError: string | null;
   refreshLanding: () => Promise<void>;
+  wishlistBooks: Book[];
+  isLoadingWishlist: boolean;
+  wishlistError: string | null;
+  refreshWishlist: () => Promise<void>;
   getBookById: (id: string) => Book | undefined;
   
   // Auth
@@ -144,6 +153,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [landingSections, setLandingSections] = useState<ApiLandingSection[]>([]);
   const [isLoadingLanding, setIsLoadingLanding] = useState<boolean>(true);
   const [landingError, setLandingError] = useState<string | null>(null);
+  const [wishlistBooks, setWishlistBooks] = useState<Book[]>([]);
+  const [isLoadingWishlist, setIsLoadingWishlist] = useState<boolean>(false);
+  const [wishlistError, setWishlistError] = useState<string | null>(null);
 
   const refreshLanding = useCallback(async () => {
     setIsLoadingLanding(true);
@@ -197,6 +209,24 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   useEffect(() => {
     refreshLanding();
   }, [refreshLanding]);
+
+  const refreshWishlist = useCallback(async () => {
+    setIsLoadingWishlist(true);
+    setWishlistError(null);
+    try {
+      const blogs = await getWishlistBooks();
+      setWishlistBooks(blogs.map((blog) => mapApiBlogToBook(blog)));
+      setFavorites((previous) => {
+        const wishlistIds = blogs.map((blog) => blog._id);
+        return wishlistIds.length > 0 ? wishlistIds : previous;
+      });
+    } catch (err: any) {
+      console.error('Failed to fetch wishlist:', err);
+      setWishlistError(err?.friendlyMessage || err?.message || 'विशलिस्ट लोड करने में समस्या आई है।');
+    } finally {
+      setIsLoadingWishlist(false);
+    }
+  }, []);
 
   useEffect(() => {
     const onUnauthorized = () => {
@@ -397,6 +427,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
     if (favorites.includes(bookId)) {
       setFavorites((prev) => prev.filter((id) => id !== bookId));
+      setWishlistBooks((prev) => prev.filter((book) => book.id !== bookId));
+      removeFromWishlist(bookId).catch((err) => {
+        console.error('Failed to remove wishlist:', err);
+        setFavorites((prev) => (prev.includes(bookId) ? prev : [...prev, bookId]));
+        refreshWishlist();
+      });
       return;
     }
 
@@ -485,6 +521,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         isLoadingLanding,
         landingError,
         refreshLanding,
+        wishlistBooks,
+        isLoadingWishlist,
+        wishlistError,
+        refreshWishlist,
         getBookById,
         user,
         isAuthModalOpen,

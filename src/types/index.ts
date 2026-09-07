@@ -64,7 +64,7 @@ export interface UserProfile {
   points: number;
 }
 
-export type NavTab = 'home' | 'explore' | 'notifications' | 'profile';
+export type NavTab = 'home' | 'explore' | 'wishlist' | 'notifications' | 'profile';
 export type FontSize = 'normal' | 'large' | 'xlarge';
 export type ReaderLanguage = 'hi' | 'en';
 export type ReaderTheme = 'cream' | 'white' | 'sepia' | 'dark';

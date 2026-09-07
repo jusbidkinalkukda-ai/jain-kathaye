@@ -1,5 +1,6 @@
 import { axiosClient } from './axiosClient';
 import { ApiEnvelope } from './authService';
+import { ApiBlog } from '../types';
 
 const extractId = (item: unknown): string | null => {
   if (typeof item === 'string') return item;
@@ -56,4 +57,46 @@ export const addToWishlist = async (bookId: string): Promise<ApiEnvelope> => {
     throw new Error(data.error || data.message || 'विशलिस्ट में जोड़ने में समस्या आई');
   }
   return data;
+};
+
+/** POST /api/public/Wishlist/:id to remove an existing wishlist item */
+export const removeFromWishlist = async (bookId: string): Promise<ApiEnvelope> => {
+  const { data } = await axiosClient.post<ApiEnvelope>(
+    `/api/public/Wishlist/${bookId}`
+  );
+  if (data && data.success === false) {
+    throw new Error(data.error || data.message || 'विशलिस्ट से हटाने में समस्या आई');
+  }
+  return data;
+};
+
+const normalizeWishlistBlog = (item: unknown): ApiBlog | null => {
+  if (!item || typeof item !== 'object') return null;
+  const blog = item as Record<string, unknown>;
+  if (typeof blog._id !== 'string' || typeof blog.title !== 'string') return null;
+
+  const category = blog.category;
+  const categoryId =
+    typeof category === 'string'
+      ? category
+      : category && typeof category === 'object' && typeof (category as Record<string, unknown>)._id === 'string'
+        ? (category as Record<string, unknown>)._id as string
+        : '';
+
+  return {
+    ...(blog as unknown as ApiBlog),
+    category: categoryId,
+    author: typeof blog.author === 'string' ? blog.author : 'परंपरा संकलन',
+    content: typeof blog.content === 'string' ? blog.content : '',
+    slug: typeof blog.slug === 'string' ? blog.slug : `blog-${blog._id}`,
+    tags: Array.isArray(blog.tags) ? blog.tags.filter((tag): tag is string => typeof tag === 'string') : [],
+  };
+};
+
+/** GET /api/public/wishlist with full blog records */
+export const getWishlistBooks = async (): Promise<ApiBlog[]> => {
+  const { data } = await axiosClient.get<unknown>('/api/public/wishlist');
+  return pickWishlistList(data)
+    .map(normalizeWishlistBlog)
+    .filter((blog): blog is ApiBlog => Boolean(blog));
 };

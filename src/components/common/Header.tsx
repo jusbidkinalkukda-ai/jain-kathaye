@@ -85,7 +85,7 @@ export const Header: React.FC = () => {
             <div className="flex items-center gap-2 sm:gap-3">
               {/* Favorites Heart Button */}
               <button
-                onClick={() => { closeReader(); setCurrentTab('explore'); }}
+                onClick={() => { closeReader(); setCurrentTab('wishlist'); }}
                 className="relative w-10 h-10 rounded-full bg-black/20 hover:bg-black/30 active:scale-95 transition-transform flex items-center justify-center border border-white/15"
                 title="पसंदीदा कथाएँ"
                 aria-label="पसंदीदा कथाएँ"
