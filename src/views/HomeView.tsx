@@ -1,51 +1,105 @@
 import React from 'react';
 import { useApp } from '../context/AppContext';
-import { BOOKS, CATEGORIES } from '../data/storiesData';
 import { CategoryPills } from '../components/books/CategoryPills';
 import { BookSection } from '../components/books/BookSection';
 import { BookCard } from '../components/books/BookCard';
-import { Sparkles, GraduationCap } from 'lucide-react';
+import { RefreshCw, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { mapApiBlogToBook } from '../api';
+import { API_BASE_URL } from '../api/axiosClient';
 
 export const HomeView: React.FC = () => {
-  const { selectedCategory, searchQuery, setSelectedCategory, setQuizOpen } = useApp();
+  const {
+    selectedCategory,
+    searchQuery,
+    setSelectedCategory,
+    allBooks,
+    allCategories,
+    landingSections,
+    isLoadingLanding,
+    landingError,
+    refreshLanding,
+  } = useApp();
 
   // Filter books based on search query or selected category
-  const filteredBooks = BOOKS.filter((book) => {
+  const filteredBooks = allBooks.filter((book) => {
+    const query = searchQuery.trim().toLowerCase();
     const matchesSearch =
-      searchQuery.trim() === '' ||
-      book.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      book.author.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      book.badgeTag.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      book.chapters.some((c) => c.title.toLowerCase().includes(searchQuery.toLowerCase()));
+      query === '' ||
+      book.title.toLowerCase().includes(query) ||
+      book.author.toLowerCase().includes(query) ||
+      book.badgeTag.toLowerCase().includes(query) ||
+      (book.tags && book.tags.some((t) => t.toLowerCase().includes(query))) ||
+      book.chapters.some(
+        (c) =>
+          c.title.toLowerCase().includes(query) ||
+          c.content.some((p) => p.toLowerCase().includes(query))
+      );
 
     const matchesCategory =
-      selectedCategory === 'all' || book.categoryId === selectedCategory;
+      selectedCategory === 'all' ||
+      book.categoryId === selectedCategory ||
+      (book.tags && book.tags.includes(selectedCategory));
 
     return matchesSearch && matchesCategory;
   });
 
-  const tirthankaraCategory = CATEGORIES.find((c) => c.id === 'tirthankara') || CATEGORIES[1];
-  const tirthankaraBooks = BOOKS.filter((b) => b.categoryId === 'tirthankara');
-
-  const pauranikCategory = CATEGORIES.find((c) => c.id === 'pauranik') || CATEGORIES[2];
-  const pauranikBooks = BOOKS.filter((b) => b.categoryId === 'pauranik');
-
-  const pathshalaCategory = CATEGORIES.find((c) => c.id === 'pathshala') || CATEGORIES[4];
-  const pathshalaBooks = BOOKS.filter((b) => b.categoryId === 'pathshala');
+  const currentSelectedCat = allCategories.find((c) => c.id === selectedCategory);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-2 pb-24 md:pb-12">
-      {/* 1. Category Pills Row matching Screenshot 1 */}
+      {/* 1. Category Pills Row */}
       <CategoryPills />
+
+      {/* API Connection & Sync Status Banner */}
+      <div className="my-2 flex items-center justify-between px-1 text-[11px] sm:text-xs">
+        <div className="flex items-center gap-1.5 text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
+          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+          <span className="font-semibold">सर्वर लाइव:</span>
+          <span className="text-emerald-700 font-mono text-[10px] sm:text-[11px]">
+            {API_BASE_URL}
+          </span>
+        </div>
+
+        <button
+          onClick={() => refreshLanding()}
+          disabled={isLoadingLanding}
+          className="flex items-center gap-1 text-jain-maroon hover:text-jain-maroon-dark bg-[#FFF8EC] hover:bg-[#FFF0B8] px-2.5 py-1 rounded-full border border-jain-gold/40 transition-all active:scale-95 disabled:opacity-50"
+          title="ताज़ा करें"
+        >
+          <RefreshCw className={`w-3 h-3 ${isLoadingLanding ? 'animate-spin' : ''}`} />
+          <span className="font-medium">रिफ्रेश</span>
+        </button>
+      </div>
+
+      {/* Error Alert with Retry button if API failed */}
+      {landingError && (
+        <div className="my-3 bg-rose-50 border border-rose-200 text-rose-800 rounded-2xl p-3.5 flex items-center justify-between gap-3 text-xs sm:text-sm">
+          <div className="flex items-center gap-2">
+            <AlertCircle className="w-5 h-5 text-rose-600 shrink-0" />
+            <div>
+              <p className="font-bold">सर्वर से जुड़ने में समस्या</p>
+              <p className="text-xs text-rose-700">{landingError}</p>
+            </div>
+          </div>
+          <button
+            onClick={() => refreshLanding()}
+            className="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl text-xs transition-colors shrink-0 shadow-xs"
+          >
+            पुनः प्रयास
+          </button>
+        </div>
+      )}
 
       {/* If Search Active or Specific Category Selected, show clean grid view */}
       {searchQuery.trim() !== '' || selectedCategory !== 'all' ? (
         <div className="mt-4">
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-bold text-sm sm:text-base text-jain-text">
-              {searchQuery ? `खोज परिणाम: "${searchQuery}"` : `${CATEGORIES.find(c => c.id === selectedCategory)?.name}`}
+              {searchQuery
+                ? `खोज परिणाम: "${searchQuery}"`
+                : `${currentSelectedCat?.name || 'चयनित श्रेणी'}`}
               <span className="text-xs font-normal text-jain-muted ml-2">
-                ({filteredBooks.length} पुस्तकें उपलब्ध)
+                ({filteredBooks.length} कथाएं उपलब्ध)
               </span>
             </h3>
             <button
@@ -67,66 +121,63 @@ export const HomeView: React.FC = () => {
               <span className="text-4xl">🔍</span>
               <h4 className="text-sm font-bold text-jain-text mt-3">कोई कथा नहीं मिली</h4>
               <p className="text-xs text-jain-muted mt-1">
-                कृपया अन्य शब्द या मुनि का नाम खोजें
+                कृपया अन्य शब्द खोजें
               </p>
             </div>
           )}
         </div>
       ) : (
-        /* Default Home Feed Matching Screenshot 1 */
+        /* Default Home Feed: Dynamic API Landing Sections only */
         <div>
-          {/* Section Divider: 📚 श्रेणीबद्ध जैन ग्रन्थावली */}
-          <div className="relative my-4 sm:my-6 text-center">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-jain-border"></div>
-            </div>
-            <span className="relative px-4 bg-[#FFFDF8] text-xs sm:text-sm font-bold text-jain-maroon flex items-center justify-center gap-1.5 mx-auto w-fit">
-              <span>📚</span>
-              <span>श्रेणीबद्ध जैन ग्रन्थावली</span>
-            </span>
-          </div>
-
-          {/* Category Section 1: तीर्थंकर चरित्र (Matching Screenshot 1) */}
-          <BookSection
-            category={tirthankaraCategory}
-            books={tirthankaraBooks}
-          />
-
-          {/* Interactive Pathshala Banner Card */}
-          <div className="my-6 bg-gradient-to-r from-[#FFF8EC] via-[#FFF0B8] to-[#FFF8EC] rounded-3xl p-4 sm:p-5 border border-[#E7B83D]/50 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-3.5">
-              <div className="w-12 h-12 rounded-2xl bg-[#8F2018] text-white flex items-center justify-center shrink-0 shadow-md">
-                <GraduationCap className="w-6 h-6 text-jain-gold" />
-              </div>
-              <div>
-                <h4 className="font-bold text-sm sm:text-base text-jain-maroon">
-                  जैन पाठशाला ज्ञान परीक्षा
-                </h4>
-                <p className="text-xs text-jain-text font-medium mt-0.5">
-                  कथाओं से सीखें, प्रश्नों के उत्तर दें और स्वाध्याय अंक प्राप्त करें!
-                </p>
+          {/* Loading Skeleton during initial fetch */}
+          {isLoadingLanding && landingSections.length === 0 && (
+            <div className="space-y-6 my-4 animate-pulse">
+              <div className="bg-white rounded-3xl p-5 border border-jain-border">
+                <div className="h-6 w-48 bg-amber-100 rounded-lg mb-4" />
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {[1, 2, 3, 4].map((i) => (
+                    <div key={i} className="h-64 bg-amber-50 rounded-2xl" />
+                  ))}
+                </div>
               </div>
             </div>
-            <button
-              onClick={() => setQuizOpen(true)}
-              className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-jain-maroon hover:bg-jain-maroon-dark text-white text-xs sm:text-sm font-bold shadow-sm transition-all active:scale-95 flex items-center justify-center gap-2 shrink-0"
-            >
-              <Sparkles className="w-4 h-4 text-jain-gold" />
-              <span>क्विज़ प्रारंभ करें</span>
-            </button>
-          </div>
+          )}
 
-          {/* Category Section 2: पौराणिक कथाएँ */}
-          <BookSection
-            category={pauranikCategory}
-            books={pauranikBooks}
-          />
+          {/* Dynamic API Landing Sections */}
+          {landingSections.map((section) => {
+            const sectionCategory = {
+              id: section._id,
+              name: section.name,
+              nameEn: section.description || 'Jain Kathayein',
+              icon: 'Sparkles',
+              bookCount: section.blog_count ?? section.blogs.length,
+              badge: `${section.blog_count ?? section.blogs.length} कथाएँ`,
+            };
 
-          {/* Category Section 3: बाल संस्कार */}
-          <BookSection
-            category={pathshalaCategory}
-            books={pathshalaBooks}
-          />
+            const sectionBooks = section.blogs.map((b) =>
+              mapApiBlogToBook(b, section.name)
+            );
+
+            return (
+              <BookSection
+                key={section._id}
+                category={sectionCategory}
+                books={sectionBooks}
+                description={section.description}
+              />
+            );
+          })}
+
+          {/* Empty State if API returned zero landing sections */}
+          {!isLoadingLanding && landingSections.length === 0 && !landingError && (
+            <div className="text-center py-16 bg-white rounded-3xl border border-jain-border p-6 my-6">
+              <span className="text-4xl">📖</span>
+              <h4 className="text-sm font-bold text-jain-text mt-3">कोई कथा उपलब्ध नहीं है</h4>
+              <p className="text-xs text-jain-muted mt-1">
+                सर्वर पर वर्तमान में कोई प्रकाशित कथा नहीं है।
+              </p>
+            </div>
+          )}
         </div>
       )}
     </div>

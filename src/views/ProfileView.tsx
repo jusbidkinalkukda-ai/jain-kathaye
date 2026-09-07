@@ -1,6 +1,5 @@
 import React from 'react';
 import { useApp } from '../context/AppContext';
-import { BOOKS } from '../data/storiesData';
 import {
   User,
   Heart,
@@ -10,9 +9,9 @@ import {
 } from 'lucide-react';
 
 export const ProfileView: React.FC = () => {
-  const { user, setAuthModalOpen, logout, favorites, bookmarks, openReader } = useApp();
+  const { user, setAuthModalOpen, logout, favorites, bookmarks, openReader, allBooks } = useApp();
 
-  const favoriteBooks = BOOKS.filter((b) => favorites.includes(b.id));
+  const favoriteBooks = allBooks.filter((b) => favorites.includes(b.id));
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-4 pb-24 md:pb-12 text-jain-text">
@@ -97,7 +96,7 @@ export const ProfileView: React.FC = () => {
         {bookmarks.length > 0 ? (
           <div className="space-y-2">
             {bookmarks.map((b, idx) => {
-              const bBook = BOOKS.find((x) => x.id === b.bookId);
+              const bBook = allBooks.find((x) => x.id === b.bookId);
               return (
                 <div
                   key={idx}

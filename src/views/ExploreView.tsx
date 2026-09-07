@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
-import { BOOKS, CATEGORIES } from '../data/storiesData';
 import { BookCard } from '../components/books/BookCard';
 import { useApp } from '../context/AppContext';
 import { Filter, Heart, Headphones, BookOpen } from 'lucide-react';
 
 export const ExploreView: React.FC = () => {
-  const { favorites } = useApp();
+  const { favorites, allBooks, allCategories } = useApp();
   const [filterType, setFilterType] = useState<'all' | 'favorites' | 'audio'>('all');
   const [selectedCat, setSelectedCat] = useState<string>('all');
 
-  const displayedBooks = BOOKS.filter((book) => {
+  const booksList = allBooks;
+  const categoriesList = allCategories;
+
+  const displayedBooks = booksList.filter((book) => {
     if (filterType === 'favorites') {
       if (!favorites.includes(book.id)) return false;
     }
@@ -46,7 +48,7 @@ export const ExploreView: React.FC = () => {
                 : 'bg-white border border-jain-border text-jain-muted hover:bg-jain-cream'
             }`}
           >
-            सभी ग्रंथ ({BOOKS.length})
+            सभी ग्रंथ ({booksList.length})
           </button>
           <button
             onClick={() => setFilterType('favorites')}
@@ -79,7 +81,7 @@ export const ExploreView: React.FC = () => {
           <Filter className="w-3.5 h-3.5" />
           <span>श्रेणी:</span>
         </span>
-        {CATEGORIES.map((cat) => (
+        {categoriesList.map((cat) => (
           <button
             key={cat.id}
             onClick={() => setSelectedCat(cat.id)}

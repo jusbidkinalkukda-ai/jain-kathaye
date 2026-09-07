@@ -9,12 +9,9 @@ import {
   ChevronLeft,
   ChevronRight,
   Globe,
-  Star,
-  BookOpen,
   Eye
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
-import { BOOKS } from '../data/storiesData';
 import { SpiritualSymbolIcon } from '../components/common/SpiritualSymbols';
 
 export const ReaderView: React.FC = () => {
@@ -35,14 +32,46 @@ export const ReaderView: React.FC = () => {
     resumeAudio,
     isBookmarked,
     toggleBookmark,
+    getBookById,
+    allBooks,
   } = useApp();
 
   const [copyNotification, setCopyNotification] = useState(false);
 
-  const book = BOOKS.find((b) => b.id === selectedBookId) || BOOKS[0];
+  const book =
+    (selectedBookId ? getBookById(selectedBookId) : null) ||
+    allBooks.find((b) => b.id === selectedBookId) ||
+    allBooks[0];
+
+  if (!book) {
+    return (
+      <div className="min-h-screen bg-[#FFFDF8] flex items-center justify-center p-6 text-center">
+        <div>
+          <h3 className="font-bold text-lg text-jain-text">कथा उपलब्ध नहीं है</h3>
+          <button
+            onClick={closeReader}
+            className="mt-4 px-4 py-2 bg-jain-maroon text-white font-bold rounded-xl text-sm"
+          >
+            वापस जाएं
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   const chapter =
     book.chapters.find((c) => c.chapterNumber === selectedChapterNumber) ||
-    book.chapters[0];
+    book.chapters[0] || {
+      id: `ch-${book.id}-1`,
+      chapterNumber: 1,
+      title: book.title,
+      titleEn: book.titleEn,
+      summary: book.description,
+      content: [book.description],
+      moral: 'सत्य और अहिंसा ही परम धर्म है।',
+      audioText: book.description,
+      readingTimeMinutes: 2,
+    };
 
   const favorite = isFavorite(book.id);
   const bookmarked = isBookmarked(book.id, chapter.id);
@@ -136,14 +165,22 @@ export const ReaderView: React.FC = () => {
         {/* Book Overview Banner Card (Maroon card matching Screenshot 2) */}
         <div className="bg-gradient-to-r from-jain-maroon to-[#731812] text-white rounded-3xl p-4 sm:p-5 shadow-jain-card flex items-center gap-4 sm:gap-5 border border-white/15">
           {/* Left Mini Book Cover */}
-          <div className="shrink-0 w-20 h-28 sm:w-24 sm:h-32 rounded-2xl bg-gradient-to-b from-[#A42920] to-[#5C100B] border border-white/20 p-2 flex flex-col justify-between items-center shadow-md">
-            <span className="bg-black/30 text-[9px] font-semibold px-2 py-0.5 rounded-full">
+          <div className="shrink-0 w-20 h-28 sm:w-24 sm:h-32 rounded-2xl bg-gradient-to-b from-[#A42920] to-[#5C100B] border border-white/20 p-2 flex flex-col justify-between items-center shadow-md relative overflow-hidden">
+            {book.coverImage && (
+              <img
+                src={book.coverImage}
+                alt={book.title}
+                className="absolute inset-0 w-full h-full object-cover object-center"
+              />
+            )}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/20" />
+            <span className="relative z-10 bg-black/40 text-[9px] font-semibold px-2 py-0.5 rounded-full border border-white/10">
               {book.badgeTag}
             </span>
-            <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
-              <SpiritualSymbolIcon symbol={book.symbol} className="w-7 h-7" />
+            <div className="relative z-10 w-9 h-9 rounded-full bg-white/20 backdrop-blur-xs flex items-center justify-center">
+              <SpiritualSymbolIcon symbol={book.symbol} className="w-6 h-6 text-amber-200" />
             </div>
-            <span className="text-[9px] text-amber-200 text-center font-bold">
+            <span className="relative z-10 text-[9px] text-amber-200 text-center font-bold">
               {book.chapters.length} कथाएं
             </span>
           </div>
@@ -160,23 +197,49 @@ export const ReaderView: React.FC = () => {
               ✍️ {book.author}
             </p>
 
-            {/* Metrics pills row: Rating | Pages | Readers */}
-            <div className="flex items-center gap-2 sm:gap-3 mt-3 flex-wrap text-[10px] sm:text-xs text-white/90">
-              <span className="flex items-center gap-1 bg-black/25 px-2 py-0.5 rounded-lg border border-white/10">
-                <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
-                <span>{book.rating.toFixed(1)}</span>
-              </span>
-              <span className="flex items-center gap-1 bg-black/25 px-2 py-0.5 rounded-lg border border-white/10">
-                <BookOpen className="w-3 h-3 text-jain-gold" />
-                <span>{book.pageCount} पृष्ठ</span>
-              </span>
-              <span className="flex items-center gap-1 bg-black/25 px-2 py-0.5 rounded-lg border border-white/10">
-                <Eye className="w-3 h-3 text-emerald-300" />
-                <span>{book.readersCount}</span>
+            {/* Tags row if available */}
+            {book.tags && book.tags.length > 0 && (
+              <div className="flex items-center gap-1.5 mt-2 flex-wrap">
+                {book.tags.map((tag, idx) => (
+                  <span
+                    key={idx}
+                    className="text-[9px] sm:text-[10px] font-medium px-2 py-0.5 rounded-md bg-black/30 border border-white/10 text-amber-200"
+                  >
+                    #{tag}
+                  </span>
+                ))}
+              </div>
+            )}
+
+            {/* Views Metric Pill */}
+            <div className="flex items-center gap-2 mt-3 flex-wrap text-[10px] sm:text-xs text-white/90">
+              <span className="flex items-center gap-1.5 bg-black/30 px-2.5 py-1 rounded-lg border border-white/10">
+                <Eye className="w-3.5 h-3.5 text-emerald-300" />
+                <span>
+                  {book.views !== undefined && book.views !== null
+                    ? typeof book.views === 'number'
+                      ? `${book.views} views`
+                      : `${book.views}`
+                    : (book.readersCount || '1.5k readers')}
+                </span>
               </span>
             </div>
           </div>
         </div>
+
+        {/* Optional Header Illustration Artwork from API */}
+        {book.headerImages && book.headerImages.length > 0 && (
+          <div className="mt-4 rounded-2xl overflow-hidden border border-jain-border shadow-xs max-h-56 sm:max-h-72">
+            <img
+              src={book.headerImages[0]}
+              alt={`${book.title} Art`}
+              className="w-full h-full object-cover object-center"
+              onError={(e) => {
+                e.currentTarget.parentElement!.style.display = 'none';
+              }}
+            />
+          </div>
+        )}
 
         {/* Chapters List (अध्याय सूची) Pills matching Screenshot 2 */}
         <div className="mt-5">
@@ -366,6 +429,20 @@ export const ReaderView: React.FC = () => {
             </div>
           </div>
         </div>
+
+        {/* Optional Footer Artwork from API */}
+        {book.footerImages && book.footerImages.length > 0 && (
+          <div className="mt-6 pt-3 border-t border-jain-border flex items-center justify-center">
+            <img
+              src={book.footerImages[0]}
+              alt={`${book.title} Decorative Footer`}
+              className="max-h-24 object-contain mx-auto opacity-90"
+              onError={(e) => {
+                e.currentTarget.style.display = 'none';
+              }}
+            />
+          </div>
+        )}
 
         {/* Bottom Chapter Navigation Bar */}
         <div className="mt-8 pt-4 border-t border-jain-border flex items-center justify-between gap-3">
