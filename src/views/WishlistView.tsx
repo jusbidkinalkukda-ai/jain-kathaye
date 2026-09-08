@@ -24,7 +24,7 @@ export const WishlistView: React.FC = () => {
             <span>मेरी विशलिस्ट</span>
           </h2>
           <p className="text-xs sm:text-sm text-jain-muted mt-0.5">
-            आपकी पसंदीदा जैन कथाएँ
+            हृदय चिह्न से जोड़ी गई आपकी पसंदीदा जैन कथाएँ
           </p>
         </div>
         <button

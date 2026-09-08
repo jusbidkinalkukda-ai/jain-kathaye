@@ -44,18 +44,17 @@ export const CategoryPills: React.FC = () => {
             ))}
           </div>
         ) : (
-          allCategories.map((cat) => {
+          allCategories.filter((cat) => cat.id !== 'all' && (cat.bookCount ?? 0) > 0).map((cat) => {
             const isSelected = selectedCategory === cat.id;
 
             return (
               <button
                 key={cat.id}
                 onClick={() => setSelectedCategory(cat.id)}
-                className={`snap-start shrink-0 flex items-center gap-2.5 py-2 px-3.5 rounded-2xl border transition-all duration-200 text-left ${
-                  isSelected
+                className={`snap-start shrink-0 flex items-center gap-2.5 py-2 px-3.5 rounded-2xl border transition-all duration-200 text-left ${isSelected
                     ? 'bg-jain-maroon text-white border-jain-maroon shadow-md scale-[1.02]'
                     : 'bg-white text-jain-text border-jain-border/80 hover:border-jain-gold/60 hover:bg-jain-cream-light shadow-xs'
-                }`}
+                  }`}
               >
                 {getCategoryIcon(cat.id, isSelected)}
                 <div>
@@ -64,9 +63,8 @@ export const CategoryPills: React.FC = () => {
                   </div>
                   {cat.bookCount !== undefined && cat.bookCount > 0 && (
                     <div
-                      className={`text-[10px] font-medium whitespace-nowrap ${
-                        isSelected ? 'text-amber-100' : 'text-jain-muted'
-                      }`}
+                      className={`text-[10px] font-medium whitespace-nowrap ${isSelected ? 'text-amber-100' : 'text-jain-muted'
+                        }`}
                     >
                       {cat.bookCount} कथाएँ
                     </div>

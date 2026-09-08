@@ -58,7 +58,7 @@ interface AppContextType {
   wishlistError: string | null;
   refreshWishlist: () => Promise<void>;
   getBookById: (id: string) => Book | undefined;
-  
+
   // Auth
   user: UserProfile;
   isAuthModalOpen: boolean;
@@ -90,7 +90,7 @@ interface AppContextType {
   resumeAudio: () => void;
   stopAudio: () => void;
   setAudioSpeed: (speed: number) => void;
-  
+
   // Quiz
   isQuizOpen: boolean;
   setQuizOpen: (open: boolean) => void;
@@ -178,11 +178,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
         // Map exclusively API categories
         if (res.data.category && res.data.category.length > 0) {
-          const mappedCategories: Category[] = res.data.category.map((c) => {
-            const matchingLanding = (res.data.landing || []).find((l) => l._id === c._id);
-            const count = matchingLanding ? (matchingLanding.blog_count ?? matchingLanding.blogs?.length ?? 0) : 0;
-            return mapApiCategoryToCategory(c, count);
-          });
+          const mappedCategories: Category[] = res.data.category
+            .map((c) => {
+              const matchingLanding = (res.data.landing || []).find((l) => l._id === c._id);
+              const count = matchingLanding ? (matchingLanding.blog_count ?? matchingLanding.blogs?.length ?? 0) : 0;
+              return mapApiCategoryToCategory(c, count);
+            })
+            .filter((c) => !/^\s*सभी\s*(ग्रंथ|श्रेण|कथा)/i.test(c.name));
 
           const allCat: Category = {
             id: 'all',
@@ -198,8 +200,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       console.error('Failed to fetch landing data in AppContext:', err);
       setLandingError(
         err?.friendlyMessage ||
-          err?.message ||
-          'सर्वर से कथाएँ लोड करने में समस्या आई है।'
+        err?.message ||
+        'सर्वर से कथाएँ लोड करने में समस्या आई है।'
       );
     } finally {
       setIsLoadingLanding(false);

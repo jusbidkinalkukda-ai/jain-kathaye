@@ -20,16 +20,14 @@ export const MobileBottomNav: React.FC = () => {
           className="flex flex-col items-center justify-center p-1 relative transition-transform active:scale-95"
         >
           <div
-            className={`w-11 h-8 rounded-xl flex items-center justify-center transition-colors ${
-              currentTab === 'home' ? 'bg-[#FFF0B8] text-jain-maroon shadow-xs' : 'text-jain-muted'
-            }`}
+            className={`w-11 h-8 rounded-xl flex items-center justify-center transition-colors ${currentTab === 'home' ? 'bg-[#FFF0B8] text-jain-maroon shadow-xs' : 'text-jain-muted'
+              }`}
           >
             <Home className="w-5 h-5" />
           </div>
           <span
-            className={`text-[11px] font-semibold mt-0.5 ${
-              currentTab === 'home' ? 'text-jain-maroon' : 'text-jain-muted'
-            }`}
+            className={`text-[11px] font-semibold mt-0.5 ${currentTab === 'home' ? 'text-jain-maroon' : 'text-jain-muted'
+              }`}
           >
             होम
           </span>
@@ -41,16 +39,14 @@ export const MobileBottomNav: React.FC = () => {
           className="flex flex-col items-center justify-center p-1 relative transition-transform active:scale-95"
         >
           <div
-            className={`w-11 h-8 rounded-xl flex items-center justify-center transition-colors ${
-              currentTab === 'explore' ? 'bg-[#FFF0B8] text-jain-maroon shadow-xs' : 'text-jain-muted'
-            }`}
+            className={`w-11 h-8 rounded-xl flex items-center justify-center transition-colors ${currentTab === 'explore' ? 'bg-[#FFF0B8] text-jain-maroon shadow-xs' : 'text-jain-muted'
+              }`}
           >
             <Compass className="w-5 h-5" />
           </div>
           <span
-            className={`text-[11px] font-semibold mt-0.5 ${
-              currentTab === 'explore' ? 'text-jain-maroon' : 'text-jain-muted'
-            }`}
+            className={`text-[11px] font-semibold mt-0.5 ${currentTab === 'explore' ? 'text-jain-maroon' : 'text-jain-muted'
+              }`}
           >
             अन्वेषण
           </span>
@@ -62,16 +58,14 @@ export const MobileBottomNav: React.FC = () => {
           className="flex flex-col items-center justify-center p-1 relative transition-transform active:scale-95"
         >
           <div
-            className={`w-11 h-8 rounded-xl flex items-center justify-center transition-colors ${
-              currentTab === 'wishlist' ? 'bg-[#FFF0B8] text-jain-maroon shadow-xs' : 'text-jain-muted'
-            }`}
+            className={`w-11 h-8 rounded-xl flex items-center justify-center transition-colors ${currentTab === 'wishlist' ? 'bg-[#FFF0B8] text-jain-maroon shadow-xs' : 'text-jain-muted'
+              }`}
           >
             <Heart className="w-5 h-5" />
           </div>
           <span
-            className={`text-[11px] font-semibold mt-0.5 ${
-              currentTab === 'wishlist' ? 'text-jain-maroon' : 'text-jain-muted'
-            }`}
+            className={`text-[11px] font-semibold mt-0.5 ${currentTab === 'wishlist' ? 'text-jain-maroon' : 'text-jain-muted'
+              }`}
           >
             विशलिस्ट
           </span>
@@ -83,9 +77,8 @@ export const MobileBottomNav: React.FC = () => {
           className="flex flex-col items-center justify-center p-1 relative transition-transform active:scale-95"
         >
           <div
-            className={`w-11 h-8 rounded-xl flex items-center justify-center transition-colors relative ${
-              currentTab === 'notifications' ? 'bg-[#FFF0B8] text-jain-maroon shadow-xs' : 'text-jain-muted'
-            }`}
+            className={`w-11 h-8 rounded-xl flex items-center justify-center transition-colors relative ${currentTab === 'notifications' ? 'bg-[#FFF0B8] text-jain-maroon shadow-xs' : 'text-jain-muted'
+              }`}
           >
             <Bell className="w-5 h-5" />
             <span className="absolute top-0 right-1 bg-red-600 text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center border border-white">
@@ -93,9 +86,8 @@ export const MobileBottomNav: React.FC = () => {
             </span>
           </div>
           <span
-            className={`text-[11px] font-semibold mt-0.5 ${
-              currentTab === 'notifications' ? 'text-jain-maroon' : 'text-jain-muted'
-            }`}
+            className={`text-[11px] font-semibold mt-0.5 ${currentTab === 'notifications' ? 'text-jain-maroon' : 'text-jain-muted'
+              }`}
           >
             सूचनाएं
           </span>
@@ -107,16 +99,14 @@ export const MobileBottomNav: React.FC = () => {
           className="flex flex-col items-center justify-center p-1 relative transition-transform active:scale-95"
         >
           <div
-            className={`w-11 h-8 rounded-xl flex items-center justify-center transition-colors ${
-              currentTab === 'profile' ? 'bg-[#FFF0B8] text-jain-maroon shadow-xs' : 'text-jain-muted'
-            }`}
+            className={`w-11 h-8 rounded-xl flex items-center justify-center transition-colors ${currentTab === 'profile' ? 'bg-[#FFF0B8] text-jain-maroon shadow-xs' : 'text-jain-muted'
+              }`}
           >
             <User className="w-5 h-5" />
           </div>
           <span
-            className={`text-[11px] font-semibold mt-0.5 ${
-              currentTab === 'profile' ? 'text-jain-maroon' : 'text-jain-muted'
-            }`}
+            className={`text-[11px] font-semibold mt-0.5 ${currentTab === 'profile' ? 'text-jain-maroon' : 'text-jain-muted'
+              }`}
           >
             प्रोफाइल
           </span>

@@ -98,7 +98,7 @@ export const ReaderView: React.FC = () => {
         title: `${chapter.title} - ${book.title}`,
         text: `${chapter.summary}\n\nजैन कथाएँ वाचनालय पर पढ़ें:`,
         url: window.location.href,
-      }).catch(() => {});
+      }).catch(() => { });
     } else {
       navigator.clipboard.writeText(
         `"${chapter.title}" - ${book.title}\n${window.location.href}`
@@ -153,16 +153,15 @@ export const ReaderView: React.FC = () => {
             title={favorite ? "पसंदीदा से हटाएं" : "पसंदीदा में जोड़ें"}
           >
             <Heart
-              className={`w-5 h-5 transition-colors ${
-                favorite ? 'text-red-600 fill-red-600' : 'text-jain-muted'
-              }`}
+              className={`w-5 h-5 transition-colors ${favorite ? 'text-red-600 fill-red-600' : 'text-jain-muted'
+                }`}
             />
           </button>
         </div>
       </div>
 
-      <main className="max-w-3xl mx-auto px-4 sm:px-6 pt-4">
-        {/* Book Overview Banner Card (Maroon card matching Screenshot 2) */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-4">
+        {/* Book Overview Banner Card */}
         <div className="bg-gradient-to-r from-jain-maroon to-[#731812] text-white rounded-3xl p-4 sm:p-5 shadow-jain-card flex items-center gap-4 sm:gap-5 border border-white/15">
           {/* Left Mini Book Cover */}
           <div className="shrink-0 w-20 h-28 sm:w-24 sm:h-32 rounded-2xl bg-gradient-to-b from-[#A42920] to-[#5C100B] border border-white/20 p-2 flex flex-col justify-between items-center shadow-md relative overflow-hidden">
@@ -253,11 +252,10 @@ export const ReaderView: React.FC = () => {
                 <button
                   key={ch.id}
                   onClick={() => openReader(book.id, ch.chapterNumber)}
-                  className={`snap-start shrink-0 px-4 py-2 rounded-2xl text-xs sm:text-sm font-bold transition-all ${
-                    isActive
+                  className={`snap-start shrink-0 px-4 py-2 rounded-2xl text-xs sm:text-sm font-bold transition-all ${isActive
                       ? 'bg-jain-maroon text-white shadow-md'
                       : 'bg-white text-jain-text border border-jain-border hover:bg-jain-cream'
-                  }`}
+                    }`}
                 >
                   अध्याय {ch.chapterNumber}
                 </button>
@@ -293,11 +291,10 @@ export const ReaderView: React.FC = () => {
           {/* Listen Button (▶ सुनें / ⏸ विराम) */}
           <button
             onClick={handleAudioToggle}
-            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold shadow-xs flex items-center gap-1.5 transition-all active:scale-95 ${
-              isCurrentAudioPlaying
+            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold shadow-xs flex items-center gap-1.5 transition-all active:scale-95 ${isCurrentAudioPlaying
                 ? 'bg-amber-600 hover:bg-amber-700 text-white'
                 : 'bg-[#2563EB] hover:bg-blue-700 text-white'
-            }`}
+              }`}
           >
             {isCurrentAudioPlaying ? (
               <>
@@ -362,11 +359,10 @@ export const ReaderView: React.FC = () => {
             {/* Bookmark */}
             <button
               onClick={() => toggleBookmark(book.id, chapter.id)}
-              className={`p-1.5 rounded-lg border transition-colors ${
-                bookmarked
+              className={`p-1.5 rounded-lg border transition-colors ${bookmarked
                   ? 'bg-amber-100 border-amber-300 text-amber-800'
                   : 'bg-white border-jain-border text-jain-muted hover:bg-jain-cream'
-              }`}
+                }`}
               title={bookmarked ? "बुकमार्क हटाएं" : "बुकमार्क जोड़ें"}
             >
               <Bookmark className={`w-4 h-4 ${bookmarked ? 'fill-amber-600' : ''}`} />
@@ -468,7 +464,7 @@ export const ReaderView: React.FC = () => {
             <ChevronRight className="w-4 h-4" />
           </button>
         </div>
-      </main>
+      </div>
     </div>
   );
 };

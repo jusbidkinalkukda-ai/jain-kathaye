@@ -9,7 +9,9 @@ export const ExploreView: React.FC = () => {
   const [selectedCat, setSelectedCat] = useState<string>('all');
 
   const booksList = allBooks;
-  const categoriesList = allCategories;
+  const categoriesList = allCategories.filter(
+    (cat) => cat.id !== 'all' && (cat.bookCount ?? 0) > 0
+  );
 
   const displayedBooks = booksList.filter((book) => {
     if (filterType === 'favorites') {
@@ -42,11 +44,10 @@ export const ExploreView: React.FC = () => {
         <div className="flex items-center gap-2 overflow-x-auto pb-1">
           <button
             onClick={() => setFilterType('favorites')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
-              filterType === 'favorites'
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${filterType === 'favorites'
                 ? 'bg-jain-maroon text-white shadow-xs'
                 : 'bg-white border border-jain-border text-jain-muted hover:bg-jain-cream'
-            }`}
+              }`}
           >
             <Heart className="w-3.5 h-3.5 fill-current" />
             <span>पसंदीदा ({favorites.length})</span>
@@ -65,7 +66,7 @@ export const ExploreView: React.FC = () => {
         </div>
       </div>
 
-      {/* Category Dropdown/Selector */}
+      {filterType !== 'favorites' && categoriesList.length > 0 && (
       <div className="flex items-center gap-2 mb-6 overflow-x-auto pb-2 scrollbar-none">
         <span className="text-xs font-bold text-jain-muted flex items-center gap-1 shrink-0">
           <Filter className="w-3.5 h-3.5" />
@@ -75,16 +76,17 @@ export const ExploreView: React.FC = () => {
           <button
             key={cat.id}
             onClick={() => setSelectedCat(cat.id)}
-            className={`px-3 py-1 rounded-lg text-xs font-medium shrink-0 transition-all ${
-              selectedCat === cat.id
+            className={`px-3 py-1 rounded-lg text-xs font-medium shrink-0 transition-all ${selectedCat === cat.id
                 ? 'bg-jain-gold text-white font-bold'
                 : 'bg-white border border-jain-border text-jain-text hover:bg-jain-cream'
-            }`}
+              }`}
           >
             {cat.name}
+            {typeof cat.bookCount === 'number' ? ` (${cat.bookCount})` : ''}
           </button>
         ))}
       </div>
+      )}
 
       {/* Grid of books */}
       {displayedBooks.length > 0 ? (
